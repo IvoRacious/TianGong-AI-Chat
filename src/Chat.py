@@ -26,6 +26,7 @@ from utils import (
     search_arxiv_docs,
     search_internet,
     search_pinecone,
+    sci_search_service,
     search_uploaded_docs,
     search_weaviate,
     search_wiki,
@@ -381,11 +382,12 @@ if "logged_in" in st.session_state:
                         if source:
                             filters["journal"] = source
 
+                        filters_string = json.dumps(filters)
                         docs_response = []
                         docs_response.extend(
-                            search_pinecone(
+                            sci_search_service(
                                 query=query,
-                                filters=filters,
+                                filters=filters_string,
                                 top_k=search_knowledge_base_top_k,
                             )
                         )
