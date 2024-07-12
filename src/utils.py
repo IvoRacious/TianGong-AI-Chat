@@ -167,11 +167,11 @@ def func_calling_chain():
                 "description": "The next query extracted for a vector database semantic search from a chat history. Translate the query into accurate English if it is not already in English.",
                 "type": "string",
             },
-            "arxiv_query": {
-                "title": "arXiv Query",
-                "description": "The next query for arXiv search extracted from a chat history in the format of a JSON object. Translate the query into accurate English if it is not already in English.",
-                "type": "string",
-            },
+            # "arxiv_query": {
+            #     "title": "arXiv Query",
+            #     "description": "The next query for arXiv search extracted from a chat history in the format of a JSON object. Translate the query into accurate English if it is not already in English.",
+            #     "type": "string",
+            # },
             "source": {
                 "title": "Source Filter",
                 "description": """Journal Name or Source extracted for a vector database semantic search, like ["JOURNAL OF INDUSTRIAL ECOLOGY", "BIOLOGICAL CONSERVATION"] MUST be in upper case.""",
@@ -266,8 +266,41 @@ def func_calling_chain():
                 "description": 'Date extracted for a vector database semantic search, in MongoDB\'s query and projection operators, in format like {"$gte": 1609459200.0, "$lte": 1640908800.0}',
                 "type": "string",
             },
+            "publication_date": {
+                "title": "Date Filter",
+                "description": 'Date extracted for a vector database semantic search, in MongoDB\'s query and projection operators, in format like {"$gte": 19900101, "$lte": 20101001}',
+                "type": "string",
+            },
+            "country": {
+                "title": "Country Filter",
+                "description": 'Country extracted for a vector database semantic search, in English',
+                "type": "string",
+                "enum": [
+                    "Japan",
+                    "China",
+                    "South Korea",
+                    "United States",
+                ],
+            },
+             "course": {
+                "title": "course Filter",
+                "description": 'course extracted for a vector database semantic search, in Chinese',
+                "type": "string",
+                "enum": [
+                    "大气数值模拟",
+                    "产业生态学",
+                    "固体废物处理处置工程",
+                    "环境工程原理",
+                    "环境决策实践",
+                    "大气污染控制工程",
+                    "环境信息技术与实践",
+                    "环境数据处理与数学模型",
+                    "水工艺设备、仪表与控制",
+                    "水处理工程"
+                ],
+            },
         },
-        "required": ["query", "arxiv_query"],
+        "required": ["query"],
     }
 
     prompt_func_calling_msgs = [
@@ -546,7 +579,7 @@ def search_pinecone(query: str, filters: dict = {}, top_k: int = 16):
     return docs_list
 
 
-def sci_search_service(query: str, filters: dict = {}, top_k: int = 16):
+def search_sci_service(query: str, filters: dict = {}, top_k: int = 16):
     if top_k == 0:
         return []
 
@@ -562,6 +595,121 @@ def sci_search_service(query: str, filters: dict = {}, top_k: int = 16):
     request_body = {
         "query": query,
         "filter": filters,
+        "topK": top_k
+    }
+
+    try:
+        response = requests.post(url, headers=headers, json=request_body)
+        response.raise_for_status()
+        docs_list = response.json()
+        return docs_list
+    except requests.exceptions.RequestException as e:
+        print(f"Error occurred while fetching data: {e}")
+        return []
+
+
+def search_report_service(query: str, top_k: int = 16):
+    if top_k == 0:
+        return []
+
+    url = "https://qyyqlnwqwgvzxnccnbgm.supabase.co/functions/v1/report_search"
+    
+    headers = {
+        "Content-Type": "application/json",
+        "Authorization": f"Bearer {st.secrets['SP_ANON_KEY']}",
+        "x-password": st.secrets['X_PASSWORD'],
+        "x-region": "us-east-1"
+    }
+
+    request_body = {
+        "query": query,
+        "topK": top_k
+    }
+
+    try:
+        response = requests.post(url, headers=headers, json=request_body)
+        response.raise_for_status()
+        docs_list = response.json()
+        return docs_list
+    except requests.exceptions.RequestException as e:
+        print(f"Error occurred while fetching data: {e}")
+        return []
+
+
+def search_patent_service(query: str, filters: dict = {}, top_k: int = 16):
+    if top_k == 0:
+        return []
+
+    url = "https://qyyqlnwqwgvzxnccnbgm.supabase.co/functions/v1/patent_search"
+    
+    headers = {
+        "Content-Type": "application/json",
+        "Authorization": f"Bearer {st.secrets['SP_ANON_KEY']}",
+        "x-password": st.secrets['X_PASSWORD'],
+        "x-region": "us-east-1"
+    }
+
+    request_body = {
+        "query": query,
+        "filter": filters,
+        "topK": top_k
+    }
+
+    try:
+        response = requests.post(url, headers=headers, json=request_body)
+        response.raise_for_status()
+        docs_list = response.json()
+        return docs_list
+    except requests.exceptions.RequestException as e:
+        print(f"Error occurred while fetching data: {e}")
+        return []
+
+
+def search_edu_service(query: str, filters: dict = {}, top_k: int = 16):
+    if top_k == 0:
+        return []
+
+    url = "https://qyyqlnwqwgvzxnccnbgm.supabase.co/functions/v1/edu_search"
+    
+    headers = {
+        "Content-Type": "application/json",
+        "Authorization": f"Bearer {st.secrets['SP_ANON_KEY']}",
+        "x-password": st.secrets['X_PASSWORD'],
+        "x-region": "us-east-1"
+    }
+
+    request_body = {
+        "query": query,
+        "filter": filters,
+        "topK": top_k
+    }
+
+    try:
+        response = requests.post(url, headers=headers, json=request_body)
+        response.raise_for_status()
+        docs_list = response.json()
+        return docs_list
+    except requests.exceptions.RequestException as e:
+        print(f"Error occurred while fetching data: {e}")
+        return []
+
+
+def search_esg_service(query: str, top_k: int = 16):
+    if top_k == 0:
+        return []
+
+    url = "https://qyyqlnwqwgvzxnccnbgm.supabase.co/functions/v1/esg_search"
+    
+    headers = {
+        "Content-Type": "application/json",
+        "Authorization": f"Bearer {st.secrets['SP_ANON_KEY']}",
+        "x-password": st.secrets['X_PASSWORD'],
+        "x-region": "us-east-1"
+    }
+
+    request_body = {
+        "query": query,
+        "filter": {},
         "topK": top_k
     }
 

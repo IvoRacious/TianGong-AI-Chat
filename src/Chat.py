@@ -26,7 +26,11 @@ from utils import (
     search_arxiv_docs,
     search_internet,
     search_pinecone,
-    sci_search_service,
+    search_sci_service,
+    search_report_service,
+    search_patent_service,
+    search_edu_service,
+    search_esg_service,
     search_uploaded_docs,
     search_weaviate,
     search_wiki,
@@ -111,81 +115,109 @@ if "logged_in" in st.session_state:
                     value=False,
                     disabled=st.session_state["search_option_disabled"],
                 )
-                search_online = st.toggle(
-                    ui.search_internet_checkbox_label,
+                search_report = st.toggle(
+                    ui.search_report_checkbox_label,
                     value=False,
                     disabled=st.session_state["search_option_disabled"],
                 )
+
+                search_patent = st.toggle(
+                    ui.search_patent_checkbox_label,
+                    value=False,
+                    disabled=st.session_state["search_option_disabled"],
+                )
+
+                search_edu = st.toggle(
+                    ui.search_edu_checkbox_label,
+                    value=False,
+                    disabled=st.session_state["search_option_disabled"],
+                )
+
+                search_esg = st.toggle(
+                    ui.search_esg_checkbox_label,
+                    value=False,
+                    disabled=st.session_state["search_option_disabled"],
+                )
+
+
+                # search_online = st.toggle(
+                #     ui.search_internet_checkbox_label,
+                #     value=False,
+                #     disabled=st.session_state["search_option_disabled"],
+                # )
                 # search_wikipedia = st.toggle(
                 #     ui.search_wikipedia_checkbox_label, value=False
                 # )
                 # search_arxiv = st.toggle(ui.search_arxiv_checkbox_label, value=False)
 
-                search_docs = st.toggle(
-                    ui.search_docs_checkbox_label,
-                    value=False,
-                    disabled=False,
-                    key="search_option_disabled",
-                )
+                # search_docs = st.toggle(
+                #     ui.search_docs_checkbox_label,
+                #     value=False,
+                #     disabled=False,
+                #     key="search_option_disabled",
+                # )
 
                 # search_knowledge_base = True
                 # search_online = st.toggle(ui.search_internet_checkbox_label, value=False)
+                
                 search_wikipedia = False
                 search_arxiv = False
-                # search_docs = False
+                search_docs = False
 
-                search_docs_option = None
+                # search_docs_option = None
 
-                if search_docs:
-                    # search_docs_option = st.radio(
-                    #     label=ui.search_docs_options,
-                    #     options=(
-                    #         ui.search_docs_options_combined,
-                    #         ui.search_docs_options_isolated,
-                    #     ),
-                    #     horizontal=True,
-                    # )
+                # if search_docs:
+                #     # search_docs_option = st.radio(
+                #     #     label=ui.search_docs_options,
+                #     #     options=(
+                #     #         ui.search_docs_options_combined,
+                #     #         ui.search_docs_options_isolated,
+                #     #     ),
+                #     #     horizontal=True,
+                #     # )
 
-                    search_docs_option = ui.search_docs_options_isolated
-                    uploaded_files = st.file_uploader(
-                        ui.sidebar_file_uploader_title,
-                        accept_multiple_files=True,
-                        type=None,
-                    )
+                #     search_docs_option = ui.search_docs_options_isolated
+                #     uploaded_files = st.file_uploader(
+                #         ui.sidebar_file_uploader_title,
+                #         accept_multiple_files=True,
+                #         type=None,
+                #     )
 
-                    if uploaded_files != []:
-                        st.session_state["chat_disabled"] = False
-                        if uploaded_files != st.session_state.get("uploaded_files"):
-                            st.session_state["uploaded_files"] = uploaded_files
-                            with st.spinner(ui.sidebar_file_uploader_spinner):
-                                st.session_state["faiss_db"] = get_faiss_db(
-                                    uploaded_files
-                                )
+                #     if uploaded_files != []:
+                #         st.session_state["chat_disabled"] = False
+                #         if uploaded_files != st.session_state.get("uploaded_files"):
+                #             st.session_state["uploaded_files"] = uploaded_files
+                #             with st.spinner(ui.sidebar_file_uploader_spinner):
+                #                 st.session_state["faiss_db"] = get_faiss_db(
+                #                     uploaded_files
+                #                 )
 
-                    else:
-                        st.session_state["chat_disabled"] = True
+                #     else:
+                #         st.session_state["chat_disabled"] = True
 
-                current_top_k_mappings = f"{search_knowledge_base}_{search_online}_{search_wikipedia}_{search_arxiv}_{search_docs_option}"
+                current_top_k_mappings = f"{search_knowledge_base}_{search_report}_{search_patent}_{search_edu}_{search_esg}"
 
                 top_k_values = top_k_mappings.get(current_top_k_mappings)
 
                 # override search_docs_top_k if search_docs_option is isolated
-                if top_k_values is None:
-                    search_knowledge_base_top_k = 0
-                    search_online_top_k = 0
-                    search_wikipedia_top_k = 0
-                    search_arxiv_top_k = 0
-                    search_docs_top_k = 16
-                else:
-                    search_knowledge_base_top_k = top_k_values.get(
-                        "search_knowledge_base_top_k", 0
-                    )
-                    search_online_top_k = top_k_values.get("search_online_top_k", 0)
-                    search_wikipedia_top_k = top_k_values.get(
-                        "search_wikipedia_top_k", 0
-                    )
-                    search_arxiv_top_k = top_k_values.get("search_arxiv_top_k", 0)
-                    search_docs_top_k = top_k_values.get("search_docs_top_k", 0)
+                # if top_k_values is None:
+                #     search_knowledge_base_top_k = 0
+                #     search_report_top_k = 0
+                #     search_online_top_k = 0
+                #     search_wikipedia_top_k = 0
+                #     search_arxiv_top_k = 0
+                #     search_docs_top_k = 16
+                # else:
+                search_knowledge_base_top_k = top_k_values.get(
+                    "search_knowledge_base_top_k", 0
+                )
+                search_report_top_k = top_k_values.get("search_report_top_k", 0)
+                search_patent_top_k = top_k_values.get("search_patent_top_k", 0)
+                search_edu_top_k = top_k_values.get(
+                    "search_edu_top_k", 0
+                )
+                search_edu_top_k = top_k_values.get("search_edu_top_k", 0)
+                search_esg_top_k = top_k_values.get("search_esg_top_k", 0)
 
             st.markdown(body=ui.sidebar_instructions)
 
@@ -348,10 +380,10 @@ if "logged_in" in st.session_state:
 
                     if (
                         search_knowledge_base
-                        or search_online
-                        or search_wikipedia
-                        or search_arxiv
-                        or search_docs
+                        or search_report
+                        or search_patent
+                        or search_edu
+                        or search_esg
                     ):
                         formatted_messages = str(
                             [
@@ -365,7 +397,7 @@ if "logged_in" in st.session_state:
                         )
 
                         query = func_calling_response.get("query")
-                        arxiv_query = func_calling_response.get("arxiv_query")
+                        # arxiv_query = func_calling_response.get("arxiv_query")
 
                         try:
                             created_at = json.loads(
@@ -373,21 +405,40 @@ if "logged_in" in st.session_state:
                             )
                         except TypeError:
                             created_at = None
+                        
+                        try:
+                            publication_date = json.loads(
+                                func_calling_response.get("publication_date", None)
+                            )
+                        except TypeError:
+                            publication_date = None
 
                         source = func_calling_response.get("source", None)
+                        country = func_calling_response.get("country", None)
+                        course = func_calling_response.get("course", None)
 
-                        filters = {}
+                        filters_sci = {}
                         if created_at:
-                            filters["date"] = created_at
+                            filters_sci["date"] = created_at
                         if source:
-                            filters["journal"] = source
+                            filters_sci["journal"] = [source]
 
-                        filters_string = json.dumps(filters)
+                        filters_patent = {}
+                        if country:
+                            filters_patent["country"] = [country]
+                        if publication_date:
+                            filters_patent["publication_date"] = publication_date
+                        
+                        filters_edu = {}
+                        if course:
+                            filters_edu["course"] = [course]
+
+                        filters_sci_string = json.dumps(filters_sci)
                         docs_response = []
                         docs_response.extend(
-                            sci_search_service(
+                            search_sci_service(
                                 query=query,
-                                filters=filters_string,
+                                filters=filters_sci_string,
                                 top_k=search_knowledge_base_top_k,
                             )
                         )
@@ -398,16 +449,16 @@ if "logged_in" in st.session_state:
                         #     )
                         # )
                         docs_response.extend(
-                            search_internet(query, top_k=search_online_top_k)
+                            search_report_service(query, top_k=search_report_top_k)
                         )
                         docs_response.extend(
-                            search_wiki(query, top_k=search_wikipedia_top_k)
+                            search_patent_service(query, filters=filters_patent, top_k=search_patent_top_k)
                         )
                         docs_response.extend(
-                            search_arxiv_docs(arxiv_query, top_k=search_arxiv_top_k)
+                            search_edu_service(query, filters=filters_edu, top_k=search_edu_top_k)
                         )
                         docs_response.extend(
-                            search_uploaded_docs(query, top_k=search_docs_top_k)
+                            search_esg_service(query, top_k=search_esg_top_k)
                         )
 
                         input = f"""Must Follow:

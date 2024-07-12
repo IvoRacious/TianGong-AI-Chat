@@ -41,6 +41,10 @@ class UI:
     sidebar_markdown: str
     sidebar_expander_title: str
     search_knowledge_base_checkbox_label: str
+    search_report_checkbox_label: str
+    search_patent_checkbox_label: str
+    search_edu_checkbox_label: str
+    search_esg_checkbox_label: str
     search_internet_checkbox_label: str
     search_wikipedia_checkbox_label: str
     search_arxiv_checkbox_label: str

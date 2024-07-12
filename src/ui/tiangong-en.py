@@ -99,7 +99,11 @@ ui_data = {
         </div>
         """,
     "sidebar_expander_title": "Advanced Search Settings:",
-    "search_knowledge_base_checkbox_label": "Knowledge Base",
+    "search_knowledge_base_checkbox_label": "Acedemic Articles",
+    "search_report_checkbox_label": "Reports",
+    "search_patent_checkbox_label": "Patents",
+    "search_edu_checkbox_label": "Education Materials",
+    "search_esg_checkbox_label": "ESG Reports",
     "search_internet_checkbox_label": "Internet",
     "search_wikipedia_checkbox_label": "Wikipedia",
     "search_arxiv_checkbox_label": "arXiv",
