@@ -463,8 +463,9 @@ if "logged_in" in st.session_state:
 
                         input = f"""Must Follow:
 - Respond to "{user_query}" by using information from "{docs_response}" (if available) and your own knowledge to provide a logical, clear, and critically analyzed reply in the same language.
+- Adjust the level of detail, tone, and word choice based on the user's identity. For example, if the user is a student, provide a simple and easy-to-understand response. If the user is a government official, focus more on policy implications.
 - Use the chat context from "{chat_history_recent}" (if available) to adjust the level of detail in your response.
-- Employ bullet points selectively, where they add clarity or organization.
+- Use bullet points selectively where they add clarity or organization.
 - Cite sources in main text using the Author-Date citation style where applicable.
 - Provide a list of references in markdown format of [title.journal.authors.date.](hyperlinks) at the end (or just the source file name), only for the references mentioned in the generated text.
 - Use LaTeX quoted by '$' or '$$' within markdown to render mathematical formulas.
