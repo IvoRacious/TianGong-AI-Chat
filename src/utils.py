@@ -709,7 +709,7 @@ def search_esg_service(query: str, top_k: int = 16):
 
     request_body = {
         "query": query,
-        "filter": {},
+        #"filter": {},
         "topK": top_k
     }
 
